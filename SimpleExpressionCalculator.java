@@ -34,16 +34,18 @@ public class SimpleExpressionCalculator {
     private static List<String> tokenise(String expression) {
         List<String> tokens = new ArrayList<>();
         int i = 0;
-        while(i < expression.length()) {
+        while (i < expression.length()) {
             char c = expression.charAt(i);
 
-            if(Character.isDigit(c) || c == '.') {
+            if (Character.isDigit(c) || c == '.') {
                 StringBuilder sb = new StringBuilder();
-                while(i < expression.length() && (Character.isDigit(c) || c == '.')) {
-                    sb.append(expression.charAt(i++));
+                while (i < expression.length() && 
+                    (Character.isDigit(expression.charAt(i)) || expression.charAt(i) == '.')) {
+                    sb.append(expression.charAt(i));
+                    i++;
                 }
                 tokens.add(sb.toString());
-            } else if(PRECEDENCE.containsKey(c) || c == '(' || c ==')') {
+            } else if (PRECEDENCE.containsKey(c) || c == '(' || c == ')') {
                 tokens.add(Character.toString(c));
                 i++;
             } else {
@@ -52,6 +54,8 @@ public class SimpleExpressionCalculator {
         }
         return tokens;
     }
+
+
 
     private static List<String> toPostfix(List<String> tokens) {
         List<String> output = new ArrayList<>();
@@ -70,7 +74,7 @@ public class SimpleExpressionCalculator {
                 while(!ops.isEmpty() && !ops.peek().equals("(")) {
                     output.add(ops.pop());
                 }
-                if(ops.isEmpty || !ops.pop().equals("(")) {
+                if(ops.isEmpty() || !ops.pop().equals("(")) {
                     throw new IllegalArgumentException("Mismatched parantheses");
                 }
             }
@@ -81,7 +85,7 @@ public class SimpleExpressionCalculator {
                 }
                 ops.push(token);
             } else {
-                throw new IllegalArgumentException("Inavlid operator: " + token);
+                throw new IllegalArgumentException("Invalid operator: " + token);
             }
         }
 
@@ -113,7 +117,7 @@ public class SimpleExpressionCalculator {
                 stack.push(Double.parseDouble(token));
             } else if(PRECEDENCE.containsKey(token.charAt(0))) {
                 if(stack.size() < 2) {
-                    throw new IllegalArgumentException("Malformed Expression")
+                    throw new IllegalArgumentException("Malformed Expression");
                 }
                 Double b = stack.pop(), a = stack.pop();
                 switch (token.charAt(0)) {
